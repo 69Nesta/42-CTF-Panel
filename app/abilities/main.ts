@@ -12,12 +12,13 @@
 |
 */
 
+import User from '#models/user'
 import { Bouncer } from '@adonisjs/bouncer'
 
-/**
- * Delete the following ability to start from
- * scratch
- */
-export const editUser = Bouncer.ability(() => {
-  return true
-})
+export const hasPermission = Bouncer.ability(
+	async (user: User, slug: string) => user.hasPermission(slug)
+)
+
+export const hasFlag = Bouncer.ability(
+	async (user: User, slug: string) => user.hasFlag(slug)
+)
