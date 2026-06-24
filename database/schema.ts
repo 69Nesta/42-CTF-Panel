@@ -7,19 +7,101 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
+export class FlagSchema extends BaseModel {
+  static $columns = ['active', 'createdAt', 'description', 'id', 'maxUsage', 'slug', 'updatedAt', 'usage'] as const
+  $columns = FlagSchema.$columns
+  @column()
+  declare active: boolean | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column()
+  declare description: string
+  @column({ isPrimary: true })
+  declare id: bigint | number
+  @column()
+  declare maxUsage: number
+  @column()
+  declare slug: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare usage: number | null
+}
+
+export class PermissionSchema extends BaseModel {
+  static $columns = ['description', 'id', 'slug'] as const
+  $columns = PermissionSchema.$columns
+  @column()
+  declare description: string
+  @column({ isPrimary: true })
+  declare id: bigint | number
+  @column()
+  declare slug: string
+}
+
+export class RoleFlagSchema extends BaseModel {
+  static $columns = ['flagId', 'roleId'] as const
+  $columns = RoleFlagSchema.$columns
+  @column()
+  declare flagId: bigint | number
+  @column({ isPrimary: true })
+  declare roleId: bigint | number
+}
+
+export class RolePermissionSchema extends BaseModel {
+  static $columns = ['permissionId', 'roleId'] as const
+  $columns = RolePermissionSchema.$columns
+  @column()
+  declare permissionId: bigint | number
+  @column({ isPrimary: true })
+  declare roleId: bigint | number
+}
+
+export class RoleUserSchema extends BaseModel {
+  static $columns = ['roleId', 'userId'] as const
+  $columns = RoleUserSchema.$columns
+  @column({ isPrimary: true })
+  declare roleId: bigint | number
+  @column()
+  declare userId: bigint | number
+}
+
+export class RoleSchema extends BaseModel {
+  static $columns = ['id', 'name', 'slug'] as const
+  $columns = RoleSchema.$columns
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare name: string
+  @column()
+  declare slug: string
+}
+
 export class UserSchema extends BaseModel {
-    static $columns = ['createdAt', 'email', 'fullName', 'id', 'password', 'updatedAt'] as const
-    $columns = UserSchema.$columns
-    @column.dateTime({ autoCreate: true })
-    declare createdAt: DateTime
-    @column()
-    declare email: string
-    @column()
-    declare fullName: string | null
-    @column({ isPrimary: true })
-    declare id: number
-    @column({ serializeAs: null })
-    declare password: string
-    @column.dateTime({ autoCreate: true, autoUpdate: true })
-    declare updatedAt: DateTime | null
+  static $columns = ['avatar', 'createdAt', 'email', 'firstName', 'fullName', 'id', 'intraId', 'lastName', 'login', 'poolMonth', 'poolYear', 'updatedAt'] as const
+  $columns = UserSchema.$columns
+  @column()
+  declare avatar: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare email: string
+  @column()
+  declare firstName: string
+  @column()
+  declare fullName: string
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare intraId: number
+  @column()
+  declare lastName: string
+  @column()
+  declare login: string
+  @column()
+  declare poolMonth: string
+  @column()
+  declare poolYear: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
 }
