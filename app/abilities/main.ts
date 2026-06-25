@@ -22,3 +22,7 @@ export const hasPermission = Bouncer.ability(
 export const hasFlag = Bouncer.ability(
 	async (user: User, slug: string) => user.hasFlag(slug)
 )
+
+export const hasRole = Bouncer.ability(
+	async (user: User, slug: string) => user.hasRole(slug)
+)

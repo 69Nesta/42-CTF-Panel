@@ -3,28 +3,18 @@ import { Oauth2Driver } from '@adonisjs/ally'
 import type { AllyUserContract, ApiRequestContract, Oauth2AccessToken, Oauth2DriverConfig, RedirectRequestContract } from '@adonisjs/ally/types'
 
 export type IntraUserPayload = {
-	id: string | number
+	id: string
 	login: string
-	email: string | null
-	displayname?: string | null
-	usual_full_name?: string | null
-	image?: {
-		link?: string | null
-	} | null
-	campus?: {
-		id: string | number
-		name: string
-		timezone: string
-	}[] | null
-	cursus_users?: {
-		cursus_id: string | number
-		cursus: {
-			id: string | number
-			name: string
-			slug: string
-			kind: string
-		}
-	}[] | null
+	email: string
+	last_name: string
+	first_name: string
+	displayname: string
+	usual_full_name: string
+	image: {
+		link: string
+	}
+	pool_year: string
+	pool_month: string
 }
 
 type IntraDriverConfig = Oauth2DriverConfig & {

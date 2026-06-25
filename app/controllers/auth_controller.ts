@@ -1,7 +1,6 @@
 import { IntraUserPayload } from '#providers/ally/intra_driver'
 import type { HttpContext } from '@adonisjs/core/http'
-import logger from '@adonisjs/core/services/logger'
-// import User from '#models/user'
+import User from '#models/user'
 
 
 export default class IntraAuthController {
@@ -21,32 +20,28 @@ export default class IntraAuthController {
 		}
 
 		const profile = await intra.user()
-		const user_raw: IntraUserPayload = profile.original as IntraUserPayload
+		let user = await User.findBy('login', profile.nickName)
+		const user_original: IntraUserPayload = profile.original as IntraUserPayload
 
-		user_raw.
-		// const email = profile.email?.trim().toLowerCase() || null
+		if (!user) {
+			user = new User()
 
-		logger.info(profile)
+			user.login = profile.nickName
+			user.intraId = Number(profile.id)
+			user.email = user_original.email
+			user.fullName = user_original.usual_full_name || user_original.displayname
+			user.firstName = user_original.first_name
+			user.lastName = user_original.last_name
+			user.poolYear = user_original.pool_year
+			user.poolMonth = user_original.pool_month
+			user.avatar = user_original.image.link
+		}
 
-		// let user = await User.findBy('login', profile.nickName)
+		if (user.avatar !== user_original.image.link)
+			user.avatar = user_original.image.link
+		await user.save()
 
-		// if (!user) {
-		// 	user = new User()
-		// 	user.login = profile.nickName
-		// 	user.token = profile.token.token
-		// 	user.intraId = profile.id
-		// }
-
-
-		// user.avatarUrl = profile.avatarUrl || null
-		// user.email = email
-		// user.fullName = profile.name || profile.nickName
-		// user.firstName = profile.original['first_name'] || null
-		// user.lastName = profile.original['last_name'] || null
-
-		// await user.save()
-
-		// await auth.use('web').login(user)
+		await auth.use('web').login(user)
 		return response.redirect().toRoute('home')
 	}
 

@@ -1,4 +1,4 @@
-import { manyToMany } from '@adonisjs/lucid/orm'
+import { afterCreate, manyToMany } from '@adonisjs/lucid/orm'
 import type { ManyToMany } from '@adonisjs/lucid/types/relations'
 import { UserSchema } from '#database/schema'
 import Role from '#models/role'
@@ -7,9 +7,22 @@ export default class User extends UserSchema {
 	@manyToMany(() => Role, { pivotTable: 'role_user' })
 	declare roles: ManyToMany<typeof Role>
 
+	@afterCreate()
+	static async assignPoolRole(user: User) {
+		if (!user.poolMonth || !user.poolYear) return
+
+		const slug = `pool-${user.poolMonth.toLowerCase()}-${user.poolYear}`
+
+		const role = await Role.firstOrCreate(
+			{ slug },
+			{ name: `Pool ${user.poolMonth} ${user.poolYear}`, slug }
+		)
+
+		await user.related('roles').attach([role.id])
+	}
+
 	private _permissionSlugs?: Set<string>
 	private _flagSlugs?: Set<string>
-
 	async getPermissionSlugs(): Promise<Set<string>> {
 		if (this._permissionSlugs) return this._permissionSlugs
 
@@ -41,5 +54,14 @@ export default class User extends UserSchema {
 			.flatMap((role) => role.flags.filter((f) => f.active).map((f) => f.slug))
 		)
 		return this._flagSlugs.has(slug)
+	}
+
+	async hasRole(slug: string): Promise<boolean> {
+		const self = await User.query()
+			.where('id', this.id)
+			.preload('roles')
+			.firstOrFail()
+
+		return self.roles.some((role) => role.slug === slug)
 	}
 }
